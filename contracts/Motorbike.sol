@@ -1,10 +1,9 @@
 
 // SPDX-License-Identifier: MIT
 
-pragma solidity <0.7.0;
-
+pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/utils/Address.sol";
-import "@openzeppelin/contracts/proxy/Initializable.sol";
+import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 
 contract Motorbike {
     // keccak-256 hash of "eip1967.proxy.implementation" subtracted by 1
@@ -15,7 +14,7 @@ contract Motorbike {
     }
     
     // Initializes the upgradeable proxy with an initial implementation specified by `_logic`.
-    constructor(address _logic) public {
+    constructor(address _logic) {
         require(Address.isContract(_logic), "ERC1967: new implementation is not a contract");
         _getAddressSlot(_IMPLEMENTATION_SLOT).value = _logic;
         (bool success,) = _logic.delegatecall(
@@ -46,7 +45,7 @@ contract Motorbike {
     // Returns an `AddressSlot` with member `value` located at `slot`.
     function _getAddressSlot(bytes32 slot) internal pure returns (AddressSlot storage r) {
         assembly {
-            r_slot := slot
+            r.slot := slot
         }
     }
 }
@@ -98,7 +97,7 @@ contract Engine is Initializable {
         
         AddressSlot storage r;
         assembly {
-            r_slot := _IMPLEMENTATION_SLOT
+            r.slot := _IMPLEMENTATION_SLOT
         }
         r.value = newImplementation;
     }
